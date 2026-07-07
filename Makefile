@@ -1,4 +1,6 @@
-.PHONY: deps lint test run docker_build docker_run
+.PHONY: deps lint test run docker_build docker_run docker_push
+
+TAG=$(USERNAME)/hello-world-printer
 
 deps:
 	pip install -r requirements.txt; \
@@ -21,3 +23,9 @@ docker_run: docker_build
 		--name hello-world-printer-dev \
 		-p 5000:5000 \
 		-d hello-world-printer
+
+docker_push: docker_build
+	@docker login --username $(USERNAME) --password $${DOCKER_PASSWORD}; \
+	docker tag hello-world-printer $(TAG); \
+	docker push $(TAG); \
+	docker logout;
